@@ -142,10 +142,45 @@
         conversation.save();
     }
 
+    function countryCodeHelper(data){
+        if (data.indexOf("+") == 0)
+            return data;
+        else
+            return "+1" + data;
+    }
+
     function onMessageReceived(ev) {
         var data = ev.data;
-        var message = initIncomingMessage(data.source, data.timestamp);
-        message.handleDataMessage(data.message);
+        var myNum = textsecure.storage.user.getNumber();
+        var now = new Date().getTime()
+        if (data.source == myNum)
+        {
+            var realData = JSON.parse(data.message.body);
+            var realMessage = {"body": realData.message, "attachments": [], flags: []};
+            if (realData.sender == myNum)
+            {
+                var message = new Whisper.Message({
+                    source         : realData.sender,
+                    sent_at        : realData.timestamp,
+                    received_at    : now,
+                    conversationId : countryCodeHelper(realData.recipient),
+                    type           : 'outgoing',
+                    sent           : true
+                });
+
+                message.handleDataMessage(realMessage);
+            }
+            else if (realData.recipient == myNum)
+            {
+                var sender = countryCodeHelper(realData.sender);
+                var message = initIncomingMessage(sender, realData.timestamp);
+                message.handleDataMessage(realMessage);
+            }
+        }
+        else{
+            var message = initIncomingMessage(data.source, data.timestamp);
+            message.handleDataMessage(data.message);
+        }
     }
 
     function onSentMessage(ev) {
