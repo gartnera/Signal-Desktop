@@ -165,7 +165,8 @@
                     received_at    : now,
                     conversationId : countryCodeHelper(realData.recipient),
                     type           : 'outgoing',
-                    sent           : true
+                    sent           : true,
+                    isSecure       : false
                 });
 
                 message.handleDataMessage(realMessage);
@@ -173,12 +174,12 @@
             else if (realData.recipient == myNum)
             {
                 var sender = countryCodeHelper(realData.sender);
-                var message = initIncomingMessage(sender, realData.timestamp);
+                var message = initIncomingMessage(sender, realData.timestamp, false);
                 message.handleDataMessage(realMessage);
             }
         }
         else{
-            var message = initIncomingMessage(data.source, data.timestamp);
+            var message = initIncomingMessage(data.source, data.timestamp, true);
             message.handleDataMessage(data.message);
         }
     }
@@ -199,7 +200,7 @@
         message.handleDataMessage(data.message);
     }
 
-    function initIncomingMessage(source, timestamp) {
+    function initIncomingMessage(source, timestamp, isSecure) {
         var now = new Date().getTime();
 
         var message = new Whisper.Message({
@@ -208,7 +209,8 @@
             received_at    : now,
             conversationId : source,
             type           : 'incoming',
-            unread         : 1
+            unread         : 1,
+            isSecure       : isSecure
         });
 
         return message;

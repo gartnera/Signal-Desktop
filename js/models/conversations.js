@@ -128,6 +128,19 @@
     sendMessage: function(body, attachments) {
         this.queueJob(function() {
             var now = Date.now();
+            if (this.get('isSecure') == false)
+            {
+                var myNum = textsecure.storage.user.getNumber();
+                var message = {
+                    sender: myNum,
+                    recipient: this.id,
+                    timestamp: now,
+                    message: body
+                }
+                var str = JSON.stringify(message);
+                textsecure.messaging.sendMessageToNumber(myNum, str, [], now);
+                return;
+            }
             var message = this.messageCollection.add({
                 body           : body,
                 conversationId : this.id,

@@ -263,6 +263,7 @@
             var type = message.get('type');
             var timestamp = message.get('sent_at');
             var conversationId = message.get('conversationId');
+            var isSecure = message.get('isSecure');
             if (dataMessage.group) {
                 conversationId = dataMessage.group.id;
             }
@@ -277,6 +278,7 @@
                             attributes = {
                                 type: 'group',
                                 groupId: dataMessage.group.id,
+                                isSecure: isSecure
                             };
                             if (dataMessage.group.type === textsecure.protobuf.GroupContext.Type.UPDATE) {
                                 attributes = {
