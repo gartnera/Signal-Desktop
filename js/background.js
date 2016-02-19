@@ -142,11 +142,11 @@
         conversation.save();
     }
 
-    function countryCodeHelper(data){
+    function phoneCleaner(data){
         if (data.indexOf("+") == 0)
             return data;
         else
-            return "+1" + data;
+            return "+1" + data.replace(/[^0-9]/g, '');
     }
 
     function onMessageReceived(ev) {
@@ -163,7 +163,7 @@
                     source         : realData.sender,
                     sent_at        : realData.timestamp,
                     received_at    : now,
-                    conversationId : countryCodeHelper(realData.recipient),
+                    conversationId : phoneCleaner(realData.recipient),
                     type           : 'outgoing',
                     sent           : true,
                     isSecure       : false
@@ -173,7 +173,7 @@
             }
             else if (realData.recipient == myNum)
             {
-                var sender = countryCodeHelper(realData.sender);
+                var sender = phoneCleaner(realData.sender);
                 var message = initIncomingMessage(sender, realData.timestamp, false);
                 message.handleDataMessage(realMessage);
             }
